@@ -1,0 +1,27 @@
+
+{
+    "nombre": "Los Lirios",
+    "cedJuridica": "3-101-123456",
+    "direccion": "San Joaquín de Flores",
+    "representante": "Daniel Martínez",
+    "cantidad": 20,
+    "cuota": 250.4
+}
+
+{
+    "nombre": "Valle escondido",
+    "cedJuridica": "3-101-123457",
+    "direccion": "Cot",
+    "representante": "Andrés Martínez",
+    "cantidad": 50,
+    "cuota": 150.99
+}
+
+{
+ "nombre": "Vista hermosa",
+ "cedJuridica": "3-101-123458",
+ "direccion": "Orosi",
+ "representante": "Xinia Martínez",
+ "cantidad": 15,
+ "cuota": 300
+}
