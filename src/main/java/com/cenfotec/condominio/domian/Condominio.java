@@ -1,28 +1,34 @@
 package com.cenfotec.condominio.domian;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Condominio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
+
     private Long id;
+    @Column(name = "nombre")
     private String nombre;
+    @Column(name = "cedJuridica")
     private String cedJuridica;
+    @Column(name = "direccion")
     private String direccion;
+    @Column(name = "representante")
     private String representante;
+    @Column(name = "cantidad")
     private int cantidad;
+    @Column(name = "cuota")
     private float cuota;
+    @Column(name = "estado")
+    private String estado;
 
     public Condominio() {
     }
 
     public Condominio(Long id, String nombre, String cedJuridica, String direccion,
-                      String representante, int cantidad, float cuota) {
+                      String representante, int cantidad, float cuota, String estado) {
         this.id = id;
         this.nombre = nombre;
         this.cedJuridica = cedJuridica;
@@ -30,6 +36,7 @@ public class Condominio {
         this.representante = representante;
         this.cantidad = cantidad;
         this.cuota = cuota;
+        this.estado = estado;
     }
 
     public Long getId() {
@@ -86,5 +93,13 @@ public class Condominio {
 
     public void setCuota(float cuota) {
         this.cuota = cuota;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

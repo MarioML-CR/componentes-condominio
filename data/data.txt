@@ -25,3 +25,12 @@
  "cantidad": 15,
  "cuota": 300
 }
+
+{
+ "nombre": "El mirador",
+ "cedJuridica": "3-101-123459",
+ "direccion": "Cachi",
+ "representante": "Mario Martínez",
+ "cantidad": 5,
+ "cuota": 350
+}

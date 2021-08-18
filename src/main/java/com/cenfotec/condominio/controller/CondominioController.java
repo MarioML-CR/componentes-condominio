@@ -1,10 +1,12 @@
 package com.cenfotec.condominio.controller;
 
 import com.cenfotec.condominio.domian.Condominio;
+import com.cenfotec.condominio.repositories.CondominioRepository;
 import com.cenfotec.condominio.service.CondominioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,8 @@ public class CondominioController {
 
     @Autowired
     private CondominioService condominioService;
+    @Autowired
+    private CondominioRepository condominioRepository;
 
     @PostMapping
     public Condominio createCondo(@RequestBody Condominio condominio) {
@@ -43,16 +47,44 @@ public class CondominioController {
         return result.map(condominio -> ResponseEntity.ok().body(condominio)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/activo")
+    public ResponseEntity<List<Condominio>> getCondosActivos(String activo) {
+        logger.info("Listando lod condominios activos", condominioRepository.findCondoByEstado(activo));
+        activo = "activo";
+        List<Condominio> condominios = condominioRepository.findCondoByEstado(activo);
+        return new ResponseEntity<>(condominios, HttpStatus.OK);
+    }
+
+    @GetMapping("/inactivo")
+    public ResponseEntity<List<Condominio>> getCondosInactivos(String inactivo) {
+        logger.info("Listando lod condominios inactivos", condominioRepository.findCondoByEstado(inactivo));
+        inactivo = "inactivo";
+        List<Condominio> condominios = condominioRepository.findCondoByEstado(inactivo);
+        return new ResponseEntity<>(condominios, HttpStatus.OK);
+    }
+    @PutMapping("/estado")
+    public ResponseEntity<Condominio> cambiarEstadoCondo(@RequestBody Condominio condominio) {
+        logger.info("Cambio de estado de condominio");
+        Optional<Condominio> condo = condominioService.findCondoById(condominio.getId());
+        Optional<Condominio> result = condominioService.updateEstadoCondo(condo.get().getId());
+        if (condo.isPresent()) return ResponseEntity.ok().body(result.get());
+        return ResponseEntity.notFound().build();
+    }
     @PutMapping
-    public ResponseEntity<Condominio> updateCondo(@RequestBody Condominio condominio) {
-        logger.info("Actualizando un condominio", condominioService.updateCondo(condominio));
-        Optional<Condominio> result = condominioService.updateCondo(condominio);
+    public ResponseEntity<Condominio> updateCondoActivo(@RequestBody Condominio condominio) {
+        logger.info("Actualizando un condominio");
+        Optional<Condominio> condo = condominioService.findCondoById(condominio.getId());
+        if (condo.get().getEstado().equals("activo")) {
+            Optional<Condominio> result = condominioService.updateCondoAcivo(condominio);
+            return ResponseEntity.ok().body(result.get());
+        }
+        return ResponseEntity.notFound().build();
         /*
         if (result.isPresent()) return ResponseEntity.ok().body(result.get());
         return ResponseEntity.notFound().build();
         Función equivalente
          */
-        return result.map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.notFound().build());
+//        return result.map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping(value = "/{id}")
