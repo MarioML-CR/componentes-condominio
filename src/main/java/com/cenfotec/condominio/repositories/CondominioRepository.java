@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface CondominioRepository extends JpaRepository<Condominio, Long> {
     @Query("select c from Condominio c where c.estado = ?1")
     List<Condominio> findCondoByEstado(String estado);
+
 }

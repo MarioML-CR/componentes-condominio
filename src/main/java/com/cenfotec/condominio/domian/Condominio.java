@@ -1,6 +1,7 @@
 package com.cenfotec.condominio.domian;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Condominio {
@@ -9,20 +10,23 @@ public class Condominio {
 
 
     private Long id;
-    @Column(name = "nombre")
+//    @Column(name = "nombre")
     private String nombre;
-    @Column(name = "cedJuridica")
+//    @Column(name = "cedJuridica")
     private String cedJuridica;
-    @Column(name = "direccion")
+//    @Column(name = "direccion")
     private String direccion;
-    @Column(name = "representante")
+//    @Column(name = "representante")
     private String representante;
-    @Column(name = "cantidad")
+//    @Column(name = "cantidad")
     private int cantidad;
-    @Column(name = "cuota")
+//    @Column(name = "cuota")
     private float cuota;
-    @Column(name = "estado")
+//    @Column(name = "estado")
     private String estado;
+
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "condominio")
+//    private Set<Amenidad> amenidades;
 
     public Condominio() {
     }
@@ -102,4 +106,12 @@ public class Condominio {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+//    public Set<Amenidad> getAmenidades() {
+//        return amenidades;
+//    }
+//
+//    public void setAmenidades(Set<Amenidad> amenidades) {
+//        this.amenidades = amenidades;
+//    }
 }

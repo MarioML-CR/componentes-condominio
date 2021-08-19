@@ -1,12 +1,16 @@
 package com.cenfotec.condominio.controller;
 
+import com.cenfotec.condominio.domian.Amenidad;
 import com.cenfotec.condominio.domian.Condominio;
+import com.cenfotec.condominio.repositories.AmenidadRepository;
 import com.cenfotec.condominio.repositories.CondominioRepository;
+import com.cenfotec.condominio.service.AmenidadService;
 import com.cenfotec.condominio.service.CondominioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +26,10 @@ public class CondominioController {
     private CondominioService condominioService;
     @Autowired
     private CondominioRepository condominioRepository;
+    @Autowired
+    AmenidadService amenidadService;
+    @Autowired
+    private AmenidadRepository amenidadRepository;
 
     @PostMapping
     public Condominio createCondo(@RequestBody Condominio condominio) {
@@ -93,4 +101,25 @@ public class CondominioController {
         if (condominioService.deleteCondo(id)) return ResponseEntity.ok().build();
         return ResponseEntity.notFound().build();
     }
+
+    @RequestMapping(value = "/amenidad/{id}", method = RequestMethod.POST)
+    public ResponseEntity<Amenidad> guardarAmenidad(@RequestBody Amenidad amenidad, @PathVariable long id) {
+        logger.info("Se carga una amenidad");
+        Optional<Condominio> condominio = condominioService.findCondoById(id);
+        if (condominio.isPresent() & condominio.get().getEstado().equals("activo")) {
+            amenidad.setCondominio(condominio.get());
+            Optional<Amenidad> result = amenidadService.saveAmenidad(amenidad);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping(value = "/amenidades/{id}")
+    public ResponseEntity<List<Amenidad>> getAmenidadesByIdCondo(@PathVariable long id) {
+        logger.info("Buscando amenidades por condominio");
+        List<Amenidad> result = amenidadRepository.findAmenidadByIdCondo(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
 }
