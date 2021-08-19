@@ -60,7 +60,6 @@ public class CondominioServiceImpl implements CondominioService{
             if (condominio.getDireccion() != null) data.setDireccion(condominio.getDireccion());
             if (condominio.getRepresentante() != null) data.setRepresentante(condominio.getRepresentante());
             if (condominio.getCantidad() > 0) data.setCantidad(condominio.getCantidad());
-            if (condominio.getCuota() > 0.0) data.setCuota(condominio.getCuota());
             if (condominio.getEstado() != null) data.setEstado(condominio.getEstado());
             return Optional.of(condominioRepository.save(data));
         }

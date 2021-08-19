@@ -4,8 +4,7 @@
     "cedJuridica": "3-101-123456",
     "direccion": "San Joaquín de Flores",
     "representante": "Daniel Martínez",
-    "cantidad": 20,
-    "cuota": 250.4
+    "cantidad": 20
 }
 
 {
@@ -13,8 +12,7 @@
     "cedJuridica": "3-101-123457",
     "direccion": "Cot",
     "representante": "Andrés Martínez",
-    "cantidad": 50,
-    "cuota": 150.99
+    "cantidad": 50
 }
 
 {
@@ -22,8 +20,7 @@
  "cedJuridica": "3-101-123458",
  "direccion": "Orosi",
  "representante": "Xinia Martínez",
- "cantidad": 15,
- "cuota": 300
+ "cantidad": 15
 }
 
 {
@@ -31,12 +28,16 @@
  "cedJuridica": "3-101-123459",
  "direccion": "Cachi",
  "representante": "Mario Martínez",
- "cantidad": 5,
- "cuota": 350
+ "cantidad": 5
 }
 
 {
  "nombre": "Pool"
+}
+
+
+{
+ "cuota": 889.99
 }
 
 SELECT C.CANTIDAD, C.CED_JURIDICA, C.CUOTA, C.DIRECCION, C.NOMBRE,  C.REPRESENTANTE, A.NOMBRE FROM CONDOMINIO C JOIN AMENIDAD A ON A.CONDOMINIO_ID = C.ID
