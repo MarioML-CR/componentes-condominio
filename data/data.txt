@@ -40,4 +40,15 @@
  "cuota": 889.99
 }
 
-SELECT C.CANTIDAD, C.CED_JURIDICA, C.CUOTA, C.DIRECCION, C.NOMBRE,  C.REPRESENTANTE, A.NOMBRE FROM CONDOMINIO C JOIN AMENIDAD A ON A.CONDOMINIO_ID = C.ID
+Condominos
+{
+ "nombre": "Mario Martínez Lanuza",
+ "telefono": "8899-5678",
+ "correo": "mml@mv.com"
+}
+
+{
+ "nombre": "Xinia Vargas Benavides",
+ "telefono": "8877-8668",
+ "correo": "xvb@mv.com"
+}

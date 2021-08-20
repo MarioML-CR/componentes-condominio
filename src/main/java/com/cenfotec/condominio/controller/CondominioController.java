@@ -2,18 +2,20 @@ package com.cenfotec.condominio.controller;
 
 import com.cenfotec.condominio.domian.Amenidad;
 import com.cenfotec.condominio.domian.Condominio;
+import com.cenfotec.condominio.domian.Condomino;
 import com.cenfotec.condominio.domian.Cuota;
 import com.cenfotec.condominio.repositories.AmenidadRepository;
 import com.cenfotec.condominio.repositories.CondominioRepository;
+import com.cenfotec.condominio.repositories.CondominoRepositoy;
 import com.cenfotec.condominio.repositories.CuotaRepository;
 import com.cenfotec.condominio.service.AmenidadService;
 import com.cenfotec.condominio.service.CondominioService;
+import com.cenfotec.condominio.service.CondominoService;
 import com.cenfotec.condominio.service.CuotaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,10 @@ public class CondominioController {
     private CuotaRepository cuotaRepository;
     @Autowired
     private CuotaService cuotaService;
+    @Autowired
+    private CondominoService condominoService;
+    @Autowired
+    private CondominoRepositoy condominoRepositoy;
 
     /*
     Carga de Condominios
@@ -122,9 +128,12 @@ public class CondominioController {
     public ResponseEntity<Condominio> cambiarEstadoCondo(@RequestBody Condominio condominio) {
         logger.info("Cambio de estado de condominio");
         Optional<Condominio> condo = condominioService.findCondoById(condominio.getId());
-        Optional<Condominio> result = condominioService.updateEstadoCondo(condo.get().getId());
-        if (condo.isPresent()) return ResponseEntity.ok().body(result.get());
-        return ResponseEntity.notFound().build();
+        if (condo.isPresent()) {
+            Optional<Condominio> result = condominioService.updateEstadoCondo(condo.get().getId());
+            return ResponseEntity.ok().body(result.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
@@ -134,13 +143,17 @@ public class CondominioController {
      * @return              Mensaje ok cuando el condominio exista y esté activo y notFound si no existe
      *                      o está inactivo
      */
-    @PutMapping
+    @PutMapping(value = "/actualizarcondo")
     public ResponseEntity<Condominio> updateCondoActivo(@RequestBody Condominio condominio) {
         logger.info("Actualizando un condominio");
         Optional<Condominio> condo = condominioService.findCondoById(condominio.getId());
-        if (condo.get().getEstado().equals("activo")) {
-            Optional<Condominio> result = condominioService.updateCondoAcivo(condominio);
-            return ResponseEntity.ok().body(result.get());
+        if (condo.isPresent()) {
+            if (condo.get().getEstado().equals("activo")) {
+                Optional<Condominio> result = condominioService.updateCondoAcivo(condominio);
+                return ResponseEntity.ok().body(result.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         }
         return ResponseEntity.notFound().build();
     }
@@ -173,7 +186,7 @@ public class CondominioController {
     public ResponseEntity<Amenidad> guardarAmenidad(@RequestBody Amenidad amenidad, @PathVariable long id) {
         logger.info("Se carga una amenidad");
         Optional<Condominio> condominio = condominioService.findCondoById(id);
-        if (condominio.isPresent() & condominio.get().getEstado().equals("activo")) {
+        if (condominio.isPresent() && condominio.get().getEstado().equals("activo")) {
             amenidad.setCondominio(condominio.get());
             Optional<Amenidad> result = amenidadService.saveAmenidad(amenidad);
             return ResponseEntity.ok().build();
@@ -190,7 +203,7 @@ public class CondominioController {
     @GetMapping(value = "/amenidad/{id}")
     public ResponseEntity<List<Amenidad>> getAmenidadesByIdCondo(@PathVariable long id) {
         logger.info("Buscando amenidades por condominio");
-        List<Amenidad> result = amenidadRepository.findAmenidadByIdCondo(id);
+        List<Amenidad> result = amenidadRepository.findAmenidadesdByIdCondo(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     /*
@@ -209,7 +222,7 @@ public class CondominioController {
     public ResponseEntity<Cuota> createCuota(@RequestBody Cuota cuota, @PathVariable long id) {
         logger.info("Creando una cuota");
         Optional<Condominio> condominio = condominioService.findCondoById(id);
-        if (condominio.isPresent() & condominio.get().getEstado().equals("activo")) {
+        if (condominio.isPresent() && condominio.get().getEstado().equals("activo")) {
             cuota.setCondominio(condominio.get());
             Optional<Cuota> result = cuotaService.saveCuota(cuota);
             return ResponseEntity.ok().build();
@@ -227,6 +240,80 @@ public class CondominioController {
     public ResponseEntity<List<Cuota>> getCuotasByIdCondo(@PathVariable long id) {
         logger.info("Listando cuotas por el id del condominio");
         List<Cuota> result = cuotaRepository.getCuotasByIdCondo(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    /*
+    Registro de Condominos
+     */
+
+    /**
+     * Método:              createCondomino
+     * Descripción:         Método que permite insertar un condómino a un condominio por su id
+     * @param condomino      variable de tipo Entity que representa la amenidad
+     * @param id            variable de tipo long que representa el id del Condomino
+     * @return              Mensaje ok cuando el condominio exista y esté activo y notFound si no existe
+     *                      o está inactivo
+     */
+    @PostMapping(value = "/condomino/{id}")
+    public ResponseEntity<Amenidad> createCondomino(@RequestBody Condomino condomino, @PathVariable long id) {
+        logger.info("Se carga un condómino");
+        Optional<Condominio> condominio = condominioService.findCondoById(id);
+        if (condominio.isPresent() && condominio.get().getEstado().equals("activo")) {
+            condomino.setCondominio(condominio.get());
+            Optional<Condomino> result = condominoService.saveCondomino(condomino);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+    /**
+     * Método:              updateCondomino
+     * Descripción:         Método que permite modificar los atributos de la entidad Condomino
+     * @param condomino    variable de tipo objeto entity que representa un condomino
+     * @return              Mensaje ok cuando el condomino existe y esté activo y notFound si no existe
+     *                      o está inactivo
+     */
+    @PutMapping(value = "/actualizacioncondomino")
+    public ResponseEntity<Condomino> updateCondomino(@RequestBody Condomino condomino) {
+        logger.info("Actualizando un condomino");
+        Optional<Condomino> condo = condominoService.findCondominoById(condomino.getIdCondomino());
+        if (condo.isPresent()) {
+            if (condo.get().getEstado().equals("condómino") &
+                    condo.get().getCondominio().getEstado().equals("activo")) {
+                Optional<Condomino> result = condominoService.updateCondomino(condomino);
+                return ResponseEntity.ok().body(result.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
+    /**
+     * Método:              updateEstadoCondomino
+     * Descripción:         Método que permite modificar el estado de un Condomino
+     * @param id            variable de tipo long que representa el id del condomino
+     * @return              Mensaje ok cuando el condominio exista y esté activo y notFound si no existe
+     *                      o está inactivo
+     */
+    @PutMapping(value = "/estadodelcondomino/{id}")
+    public ResponseEntity<Condomino> updateEstadoDelCondominoById(@PathVariable long id) {
+        logger.info("Actualizando un condomino");
+        Optional<Condomino> condomino = condominoService.findCondominoById(id);
+        if (condomino.isPresent() && condomino.get().getCondominio().getEstado().equals("activo")) {
+            Optional<Condomino> result = condominoService.updateEstadoCondomino(condomino.get());
+            return ResponseEntity.ok().body(result.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+    /**
+     * Método:              getAmenidadesByIdCondo
+     * Descripción:         Método que permite listar las amenidades de un condominio (por su id)
+     * @param id            variable de tipo long que representa el id del Condominio
+     * @return              Listado de amenidades registradas
+     */
+    @GetMapping(value = "/condomino/{id}")
+    public ResponseEntity<List<Condomino>> getCondominosByIdCondo(@PathVariable long id) {
+        logger.info("Listando los condóminos de un condominio");
+        List<Condomino> result = condominoRepositoy.getAllCondominosByCondo(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

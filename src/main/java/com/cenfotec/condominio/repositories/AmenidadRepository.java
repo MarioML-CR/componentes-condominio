@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface AmenidadRepository extends JpaRepository<Amenidad, Long> {
 
     @Query("select a from Amenidad a where a.condominio.id = ?1")
-    List<Amenidad> findAmenidadByIdCondo(long id);
+    List<Amenidad> findAmenidadesdByIdCondo(long id);
 }
